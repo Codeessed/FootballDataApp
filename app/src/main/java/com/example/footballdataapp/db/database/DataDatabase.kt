@@ -22,23 +22,23 @@ abstract class DataDatabase: RoomDatabase() {
     abstract fun getAreaDao(): AreaDao
     abstract fun getCompetitionDao(): CompetitionDao
 
-    companion object{
-        @Volatile
-        private var instance: DataDatabase? = null
-        private val LOCK = Any()
-
-        operator fun invoke(context: Context) = instance ?: synchronized(LOCK){
-            instance ?: createDatabase(context).also{
-                instance = it
-            }
-        }
-
-        private fun createDatabase(context: Context) =
-            Room.databaseBuilder(
-                context.applicationContext,
-                DataDatabase::class.java,
-                "data_db.db"
-            ).build()
-
-    }
+//    companion object{
+//        @Volatile
+//        private var instance: DataDatabase? = null
+//        private val LOCK = Any()
+//
+//        operator fun invoke(context: Context) = instance ?: synchronized(LOCK){
+//            instance ?: createDatabase(context).also{
+//                instance = it
+//            }
+//        }
+//
+//        private fun createDatabase(context: Context) =
+//            Room.databaseBuilder(
+//                context.applicationContext,
+//                DataDatabase::class.java,
+//                "data_db.db"
+//            ).build()
+//
+//    }
 }

@@ -13,6 +13,6 @@ interface AreaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertArea(area: Area)
 
-    @Query("SELECT * FROM area_table")
-    suspend fun getAllArea(): Flow<List<Area>>
+//    @Query("SELECT * FROM area_table")
+//    suspend fun getAllArea(): Flow<List<Area>>
 }

@@ -1,5 +1,6 @@
 package com.example.footballdataapp.db.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -15,6 +16,6 @@ interface CompetitionDao {
     suspend fun insertCompetition(competition: Competition)
 
     @Query("SELECT * FROM competition_table")
-    suspend fun getAllArea(): Flow<List<Competition>>
+    fun getAllArea(): Flow<List<Competition>>
 
 }

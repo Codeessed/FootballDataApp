@@ -1,9 +1,10 @@
 package com.example.footballdataapp.repository.db
 
-import com.example.footballdataapp.model.CompetitionResponse
-import com.example.footballdataapp.util.Resource
+import com.example.footballdataapp.model.Competition
+import kotlinx.coroutines.flow.Flow
 
 interface DatabaseDataRepository {
 
-    suspend fun getCompetition(): Resource<CompetitionResponse>
+    suspend fun getCompetition(): Flow<List<Competition>>
+    suspend fun insertCompetition(competition: Competition)
 }

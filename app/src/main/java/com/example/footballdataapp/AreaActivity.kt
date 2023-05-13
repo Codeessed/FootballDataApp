@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.footballdataapp.db.dao.CompetitionDao
 import com.example.footballdataapp.model.Area
 import com.example.footballdataapp.model.Competition
 import com.example.footballdataapp.presentation.adapters.AreaAdapter
@@ -18,11 +19,13 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AreaActivity : AppCompatActivity(), AreaAdapter.AreaItemClickListener {
     private lateinit var binding: ActivityAreaBinding
 
+    @Inject lateinit var competitionDao: CompetitionDao
 
     private val dataViewModel: DataViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,12 +33,14 @@ class AreaActivity : AppCompatActivity(), AreaAdapter.AreaItemClickListener {
         binding = ActivityAreaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         lifecycleScope.launch{
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 dataViewModel.allCompetition.collectLatest { competition ->
                     when(competition){
                         is DataViewModel.CompetitionEvent.AllCompetitionSuccess -> {
-                            adapterSetUp(competition.competitionResponse.competitions)
+                            adapterSetUp(competition.competitionResponse)
                             Log.d("competition", competition.competitionResponse.toString())
                         }
                         is DataViewModel.CompetitionEvent.Failure -> {
@@ -45,13 +50,38 @@ class AreaActivity : AppCompatActivity(), AreaAdapter.AreaItemClickListener {
                             Log.d("competition", "loading")
                         }
                         is DataViewModel.CompetitionEvent.Empty -> {
-                            dataViewModel.allCompetition()
+                            dataViewModel.getCompetition()
                         }
 
                     }
                 }
             }
         }
+//        dataViewModel.getCompetition()
+//
+//        Log.d("competition", "${ competitionDao.hashCode() }")
+//        lifecycleScope.launch{
+//            repeatOnLifecycle(Lifecycle.State.STARTED){
+//                dataViewModel.allCompetition.collectLatest { competition ->
+//                    when(competition){
+//                        is DataViewModel.CompetitionEvent.AllCompetitionSuccess -> {
+//                            adapterSetUp(competition.competitionResponse.competitions)
+//                            Log.d("competition", competition.competitionResponse.toString())
+//                        }
+//                        is DataViewModel.CompetitionEvent.Failure -> {
+//                            Log.d("competition", competition.message.toString())
+//                        }
+//                        is DataViewModel.CompetitionEvent.Loading -> {
+//                            Log.d("competition", "loading")
+//                        }
+//                        is DataViewModel.CompetitionEvent.Empty -> {
+//                            dataViewModel.allCompetition()
+//                        }
+//
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun onResume() {
