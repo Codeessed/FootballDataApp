@@ -13,9 +13,11 @@ import kotlinx.coroutines.flow.Flow
 interface CompetitionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCompetition(competition: Competition)
+    suspend fun insertCompetition(competition: List<Competition>)
 
     @Query("SELECT * FROM competition_table")
-    fun getAllArea(): Flow<List<Competition>>
+    fun getAllCompetition(): Flow<List<Competition>>
 
+    @Query("DELETE FROM competition_table")
+    fun deleteCompetition()
 }

@@ -5,10 +5,10 @@ import androidx.room.Room
 import com.example.footballdataapp.data.network.ApiInterface
 import com.example.footballdataapp.db.dao.CompetitionDao
 import com.example.footballdataapp.db.database.DataDatabase
-import com.example.footballdataapp.repository.db.DatabaseDataImpl
-import com.example.footballdataapp.repository.db.DatabaseDataRepository
-import com.example.footballdataapp.repository.network.NetworkDataImpl
-import com.example.footballdataapp.repository.network.NetworkDataRepository
+//import com.example.footballdataapp.repository.db.DatabaseDataImpl
+//import com.example.footballdataapp.repository.db.DatabaseDataRepository
+//import com.example.footballdataapp.repository.network.NetworkDataImpl
+//import com.example.footballdataapp.repository.network.NetworkDataRepository
 import com.example.footballdataapp.util.Constants.BASE_URL
 import com.example.footballdataapp.util.Constants.DATABASE_NAME
 import dagger.Module
@@ -34,7 +34,7 @@ object NetworkModule {
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(baseUrl)
-//            .client(interceptor)
+            .client(interceptor)
 
         return retrofit.build()
     }
@@ -43,7 +43,7 @@ object NetworkModule {
     @Provides
     fun provideDatabase(
        @ApplicationContext context: Context
-    ) = Room.databaseBuilder(
+    ): DataDatabase = Room.databaseBuilder(
         context,
         DataDatabase::class.java,
         DATABASE_NAME
@@ -59,13 +59,13 @@ object NetworkModule {
         return providesRetrofitInstance(BASE_URL).create(ApiInterface::class.java)
     }
 
-    @Singleton
-    @Provides
-    fun providesNetworkRepository(apiInterface: ApiInterface): NetworkDataRepository =
-        NetworkDataImpl(apiInterface)
-
-    @Singleton
-    @Provides
-    fun providesDatabaseRepository(competitionDao: CompetitionDao): DatabaseDataRepository =
-        DatabaseDataImpl(competitionDao)
+//    @Singleton
+//    @Provides
+//    fun providesNetworkRepository(apiInterface: ApiInterface): NetworkDataRepository =
+//        NetworkDataImpl(apiInterface)
+//
+//    @Singleton
+//    @Provides
+//    fun providesDatabaseRepository(competitionDao: CompetitionDao): DatabaseDataRepository =
+//        DatabaseDataImpl(competitionDao)
 }

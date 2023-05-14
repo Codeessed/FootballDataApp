@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -14,6 +15,7 @@ import com.example.footballdataapp.db.dao.CompetitionDao
 import com.example.footballdataapp.model.Area
 import com.example.footballdataapp.model.Competition
 import com.example.footballdataapp.presentation.adapters.AreaAdapter
+import com.example.footballdataapp.util.BoundResource
 import com.example.gomoneyapp.databinding.ActivityAreaBinding
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,22 +36,46 @@ class AreaActivity : AppCompatActivity(), AreaAdapter.AreaItemClickListener {
         setContentView(binding.root)
 
 
-
         lifecycleScope.launch{
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 dataViewModel.allCompetition.collectLatest { competition ->
                     when(competition){
+//                        is BoundResource.Success -> {
+//                            Log.d("competition", "success ${competition.error}, ${competition.data}\"")
+//                            adapterSetUp(competition.data!!)
+//                        }
+//                        is BoundResource.Loading<*> -> {
+//                            Log.d("competition", "loading ${competition.error}, ${competition.data}\"")
+//                        }
+//                        is BoundResource.Error<*> -> {
+//                            adapterSetUp(competition.data!!)
+//                            Log.d("competition", "error ${competition.error}, ${competition.data}\"")
+//                        }
+//                        else -> {
+//                            Log.d("competition", "empty")
+//                            dataViewModel.getCompetition()
+//                        }
                         is DataViewModel.CompetitionEvent.AllCompetitionSuccess -> {
                             adapterSetUp(competition.competitionResponse)
-                            Log.d("competition", competition.competitionResponse.toString())
+                            binding.areaError.isVisible = false
+                            binding.areaProgress.isVisible = false
+                            binding.areaRecycler.isVisible = true
+                            if (!competition.error.isNullOrEmpty()){
+                                Toast.makeText(this@AreaActivity, competition.error, Toast.LENGTH_SHORT).show()
+                            }
                         }
                         is DataViewModel.CompetitionEvent.Failure -> {
-                            Log.d("competition", competition.message.toString())
+                            binding.areaError.text = competition.message
+                            binding.areaError.isVisible = true
+                            binding.areaProgress.isVisible = false
+                            binding.areaRecycler.isVisible = false
                         }
                         is DataViewModel.CompetitionEvent.Loading -> {
-                            Log.d("competition", "loading")
+                            binding.areaError.isVisible = false
+                            binding.areaProgress.isVisible = true
+                            binding.areaRecycler.isVisible = false
                         }
-                        is DataViewModel.CompetitionEvent.Empty -> {
+                        else -> {
                             dataViewModel.getCompetition()
                         }
 
