@@ -2,8 +2,8 @@ package com.example.footballdataapp.repository.db
 //
 //import com.example.footballdataapp.data.network.ApiInterface
 //import com.example.footballdataapp.db.dao.CompetitionDao
-//import com.example.footballdataapp.model.Competition
-//import com.example.footballdataapp.model.CompetitionResponse
+//import com.example.footballdataapp.model.competition.Competition
+//import com.example.footballdataapp.model.competition.CompetitionResponse
 //import com.example.footballdataapp.util.Resource
 //import com.example.footballdataapp.util.networkBoundResource
 //import kotlinx.coroutines.delay

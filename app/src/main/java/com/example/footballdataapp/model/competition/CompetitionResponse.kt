@@ -1,6 +1,4 @@
-package com.example.footballdataapp.model
-
-import androidx.room.Entity
+package com.example.footballdataapp.model.competition
 
 data class CompetitionResponse(
     val competitions: List<Competition>,

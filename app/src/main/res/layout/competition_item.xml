@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/area_card"
+        android:id="@+id/competition_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="10dp"
@@ -25,11 +25,11 @@
             android:orientation="horizontal"
             >
             <ImageView
-                android:id="@+id/flag_img"
+                android:id="@+id/emblem_img"
                 android:layout_width="70dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                />
+                android:contentDescription="emblem image" />
 
             <View
                 android:layout_width="15dp"
@@ -39,25 +39,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingVertical="10dp"
+                android:paddingEnd="10dp"
                 android:orientation="vertical"
                 >
                 <TextView
-                    android:id="@+id/area_name"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/competition_type"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Area Name"
+                    android:text="CUP"
+                    />
+                <TextView
+                    android:id="@+id/competition_plan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TIER_ONE"
+                    />
+
+                <TextView
+                    android:id="@+id/competition_duration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="2022/0406 - 2023/05/05"
                     />
                 <TextView
                     android:id="@+id/competition_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Competition Name"
-                    />
-                <TextView
-                    android:id="@+id/competition_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Type"
+                    android:text="AFC Champions League"
                     />
             </androidx.appcompat.widget.LinearLayoutCompat>
 

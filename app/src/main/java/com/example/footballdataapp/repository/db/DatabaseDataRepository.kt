@@ -1,6 +1,6 @@
 package com.example.footballdataapp.repository.db
 
-//import com.example.footballdataapp.model.Competition
+//import com.example.footballdataapp.model.competition.Competition
 //import kotlinx.coroutines.flow.Flow
 //
 //interface DatabaseDataRepository {

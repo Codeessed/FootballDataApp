@@ -1,4 +1,4 @@
-package com.example.footballdataapp.model
+package com.example.footballdataapp.model.competition
 
 data class Winner(
     val address: String,

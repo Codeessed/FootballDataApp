@@ -1,15 +1,19 @@
 package com.example.footballdataapp
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.footballdataapp.model.Competition
+import com.example.footballdataapp.model.areas.AreaData
+import com.example.footballdataapp.model.competition.Competition
+import com.example.footballdataapp.model.competition.CompetitionResponse
 import com.example.footballdataapp.repository.CompetitionRepositoryImpl
 import com.example.footballdataapp.util.BoundResource
+import com.example.footballdataapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,48 +27,99 @@ class DataViewModel @Inject constructor(
 //val competition = repository.getCompetition().as
 //    }
 
-    val competition = repository.getCompetition().asLiveData()
+//    val competition = repository.getCompetition().asLiveData()
 
 
-    fun getCompetition() {
+    fun getCompetition(areas: String) {
         viewModelScope.launch {
-            repository.getCompetition().collect { boundResource ->
+            _allCompetition.value = CompetitionEvent.Loading
+            try {
+                when(val response = repository.getCompetition(areas)){
+                    is Resource.Success ->{
+                        _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(response.data!!)
+                    }
+                    is Resource.Failure ->{
+                        Log.d("competition", "failure ${ response.message!! }")
+                        _allCompetition.value = CompetitionEvent.Failure(response.message!!)
+                    }
+                    is Resource.Error ->{
+                        Log.d("competition", "error ${ response.error!!.message }")
+                        _allCompetition.value = CompetitionEvent.Failure(response.error!!.message)
+                    }
+                }
+            }catch (e: java.lang.Exception){
+                when(e){
+                    is IOException ->{
+                        _allCompetition.value = CompetitionEvent.Failure("Weak network")
+                    }
+                    else -> _allCompetition.value = CompetitionEvent.Failure(e.message!!)
+                }
+            }
+
+
+
+
+
+//                .collect { boundResource ->
+//                when(boundResource){
+//                    is BoundResource.Success -> {
+//                        _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(boundResource.data!!, null)
+//                    }
+//                    is BoundResource.Error -> {
+//                        if (boundResource.data.isNullOrEmpty()){
+//                            _allCompetition.value = CompetitionEvent.Failure(boundResource.error?.localizedMessage.toString())
+//                        }else{
+//                            _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(boundResource.data, boundResource.error?.localizedMessage.toString())
+//                        }
+//                    }
+//                    is BoundResource.Loading -> {
+//                        if (boundResource.data.isNullOrEmpty()){
+//                            _allCompetition.value = CompetitionEvent.Loading
+//                        }
+//                    }
+//                    else -> {
+//                        _allCompetition.value = CompetitionEvent.Empty
+//                    }
+//                }
+//            }
+        }
+    }
+    fun getAreas() {
+        viewModelScope.launch {
+            repository.getAllArea().collect { boundResource ->
                 when(boundResource){
                     is BoundResource.Success -> {
-                        _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(boundResource.data!!, null)
+                        _allAreas.value = CompetitionEvent.AllAreasSuccess(boundResource.data!!, null)
                     }
                     is BoundResource.Error -> {
                         if (boundResource.data.isNullOrEmpty()){
-                            _allCompetition.value = CompetitionEvent.Failure(boundResource.error?.localizedMessage.toString())
+                            _allAreas.value = CompetitionEvent.Failure(boundResource.error?.localizedMessage.toString())
                         }else{
-                            _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(boundResource.data, boundResource.error?.localizedMessage.toString())
+                            _allAreas.value = CompetitionEvent.AllAreasSuccess(boundResource.data, boundResource.error?.localizedMessage.toString())
                         }
                     }
                     is BoundResource.Loading -> {
                         if (boundResource.data.isNullOrEmpty()){
-                            _allCompetition.value = CompetitionEvent.Loading
+                            _allAreas.value = CompetitionEvent.Loading
                         }
-//                        else{
-//                            _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(boundResource.data, null)
-//                        }
                     }
                     else -> {
-                        _allCompetition.value = CompetitionEvent.Empty
+                        _allAreas.value = CompetitionEvent.Empty
                     }
                 }
             }
         }
     }
 
+    private  val _allAreas = MutableStateFlow<CompetitionEvent>(CompetitionEvent.Empty)
+    val allAreas = _allAreas.asStateFlow()
 
     private  val _allCompetition = MutableStateFlow<CompetitionEvent>(CompetitionEvent.Empty)
     val allCompetition = _allCompetition.asStateFlow()
 
-//    private  val _allCompetition = MutableStateFlow<CompetitionEvent>(CompetitionEvent.Empty)
-//    val allCompetition = _allCompetition.asStateFlow()
-//
     sealed class CompetitionEvent {
-        class AllCompetitionSuccess(val competitionResponse: List<Competition>, val error: String?) : CompetitionEvent()
+        class AllAreasSuccess(val areasResult: List<AreaData>, val error: String?) : CompetitionEvent()
+        class AllCompetitionSuccess(val competitionResponse: CompetitionResponse) : CompetitionEvent()
         object Empty: CompetitionEvent()
         class Failure(val message: String) : CompetitionEvent()
         object Loading : CompetitionEvent()

@@ -3,7 +3,6 @@ package com.example.footballdataapp.di
 import android.content.Context
 import androidx.room.Room
 import com.example.footballdataapp.data.network.ApiInterface
-import com.example.footballdataapp.db.dao.CompetitionDao
 import com.example.footballdataapp.db.database.DataDatabase
 //import com.example.footballdataapp.repository.db.DatabaseDataImpl
 //import com.example.footballdataapp.repository.db.DatabaseDataRepository
@@ -48,10 +47,6 @@ object NetworkModule {
         DataDatabase::class.java,
         DATABASE_NAME
     ).build()
-
-    @Singleton
-    @Provides
-    fun provideDataDao(db: DataDatabase) = db.getCompetitionDao()
 
     @Singleton
     @Provides

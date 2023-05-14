@@ -1,8 +1,9 @@
 package com.example.footballdataapp.util
 
-sealed class Resource<T>(val data: T?, val error: Throwable? = null){
-    class Success<T>(data: T):Resource<T>(data, null)
-    class Error<T>(throwable: Throwable, data: T? = null):Resource<T>(data, throwable)
-    class Loading<T>(data: T? = null):Resource<T>(data, null)
+import com.example.footballdataapp.model.ErrorMessage
 
+sealed class Resource<T>(val data: T?, val error: ErrorMessage?, val message: String?){
+    class Success<T>(data: T?):Resource<T>(data, null,  null)
+    class Error<T>(error: ErrorMessage?):Resource<T>(null, error, null)
+    class Failure<T>(message: String?): Resource<T>(null, null, message)
 }

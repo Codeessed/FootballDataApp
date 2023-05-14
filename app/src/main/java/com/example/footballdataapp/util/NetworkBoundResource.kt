@@ -1,6 +1,5 @@
 package com.example.footballdataapp.util
 
-import com.example.footballdataapp.model.Competition
 import kotlinx.coroutines.flow.*
 
 inline fun<ResultType, RequestType> networkBoundResource (
