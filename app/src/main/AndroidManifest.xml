@@ -15,10 +15,10 @@
         android:theme="@style/Theme.GoMoneyApp"
         tools:targetApi="31">
         <activity
-            android:name="com.example.footballdataapp.AreaLeagueActivity"
+            android:name="com.example.footballdataapp.presentation.screen.AreaLeagueActivity"
             android:exported="false" />
         <activity
-            android:name="com.example.footballdataapp.AreaActivity"
+            android:name="com.example.footballdataapp.presentation.screen.AreaActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

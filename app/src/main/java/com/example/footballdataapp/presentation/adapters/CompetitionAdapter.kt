@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.example.footballdataapp.model.areas.AreaData
 import com.example.footballdataapp.model.competition.Competition
+import com.example.footballdataapp.util.FunctionsUtil
 import com.example.gomoneyapp.R
 import com.example.gomoneyapp.databinding.CompetitionItemBinding
-import fromIsoToString
+import com.example.footballdataapp.util.fromIsoToString
 
-class CompetitioAdapter(private val onItemClickListener: AreaItemClickListener, val context: Context): RecyclerView.Adapter<CompetitioAdapter.AreaViewHolder>() {
+class CompetitionAdapter(private val onItemClickListener: AreaItemClickListener, val context: Context): RecyclerView.Adapter<CompetitionAdapter.AreaViewHolder>() {
 
     inner class AreaViewHolder(var binding: CompetitionItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int){
@@ -33,7 +33,7 @@ class CompetitioAdapter(private val onItemClickListener: AreaItemClickListener, 
             binding.competitionName.text = competition.name
             binding.competitionPlan.text = competition.plan
             binding.competitionType.text = competition.type
-            binding.competitionDuration.text = context.getString(R.string.date_duration, competition.area.name, competition.currentSeason?.startDate.fromIsoToString("yyyy-MM-dd", "yyyy/MM/dd")?:"...",  competition.currentSeason?.endDate.fromIsoToString("yyyy-MM-dd", "yyyy/MM/dd")?:"...")
+            binding.competitionDuration.text = context.getString(R.string.date_duration, competition.area.name, FunctionsUtil.validateDateInput(competition.currentSeason?.startDate, "yyyy-MM-dd", "yyyy/MM/dd"), FunctionsUtil.validateDateInput(competition.currentSeason?.endDate, "yyyy-MM-dd", "yyyy/MM/dd"),)
             binding.competitionCard.setOnClickListener {
                 onItemClickListener.onClick(competition)
             }

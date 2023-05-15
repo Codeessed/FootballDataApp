@@ -1,34 +1,28 @@
-package com.example.footballdataapp
+package com.example.footballdataapp.presentation.screen
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.footballdataapp.DataViewModel
 import com.example.footballdataapp.model.ChosenAreaModel
-import com.example.footballdataapp.model.areas.AreaData
 import com.example.footballdataapp.model.competition.Competition
-import com.example.footballdataapp.presentation.adapters.CompetitioAdapter
+import com.example.footballdataapp.presentation.adapters.CompetitionAdapter
 import com.example.gomoneyapp.R
 import com.example.gomoneyapp.databinding.ActivityAreaLeagueFragmentBinding
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.*
-import java.util.stream.Collector
-import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class AreaLeagueActivity : AppCompatActivity(), CompetitioAdapter.AreaItemClickListener {
+class AreaLeagueActivity : AppCompatActivity(), CompetitionAdapter.AreaItemClickListener {
 
     private lateinit var binding: ActivityAreaLeagueFragmentBinding
 
@@ -116,7 +110,7 @@ class AreaLeagueActivity : AppCompatActivity(), CompetitioAdapter.AreaItemClickL
 
     fun adapterSetUp(list: List<Competition>){
         val leagueRecycler = binding.leagueRecycler
-        val leagueAdapter = CompetitioAdapter(this, this)
+        val leagueAdapter = CompetitionAdapter(this, this)
         leagueRecycler.adapter = leagueAdapter
         leagueRecycler.layoutManager = LinearLayoutManager(this)
         leagueAdapter.differ.submitList(list)
@@ -124,9 +118,7 @@ class AreaLeagueActivity : AppCompatActivity(), CompetitioAdapter.AreaItemClickL
 
 
     override fun onClick(competition: Competition) {
-        var gson = Gson()
-        var string = gson.toJson(competition)
-        Toast.makeText(this, string, Toast.LENGTH_SHORT).show()
+
     }
 
 }

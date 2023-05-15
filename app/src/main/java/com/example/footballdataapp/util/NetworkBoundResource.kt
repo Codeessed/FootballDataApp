@@ -1,6 +1,7 @@
 package com.example.footballdataapp.util
 
 import kotlinx.coroutines.flow.*
+import java.io.IOException
 
 inline fun<ResultType, RequestType> networkBoundResource (
     crossinline query: () -> Flow<ResultType>,

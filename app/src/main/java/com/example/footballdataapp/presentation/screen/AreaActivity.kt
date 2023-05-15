@@ -1,4 +1,4 @@
-package com.example.footballdataapp
+package com.example.footballdataapp.presentation.screen
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +12,7 @@ import androidx.core.view.size
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.footballdataapp.DataViewModel
 import com.example.footballdataapp.model.ChosenAreaModel
 import com.example.footballdataapp.model.areas.AreaData
 import com.example.footballdataapp.util.SharedPreference
@@ -23,7 +24,6 @@ import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class AreaActivity : AppCompatActivity(){
@@ -44,11 +44,15 @@ class AreaActivity : AppCompatActivity(){
         binding.areasRetry.setOnClickListener {
             dataViewModel.getAreas()
         }
+        binding.refreshLayout.setOnRefreshListener {
+            dataViewModel.getAreas()
+        }
         lifecycleScope.launch{
             repeatOnLifecycle(Lifecycle.State.STARTED){
                 dataViewModel.allAreas.collectLatest { areas ->
                     when(areas){
                         is DataViewModel.CompetitionEvent.AllAreasSuccess -> {
+                            binding.refreshLayout.isRefreshing = false
                             listOfAreas.clear()
                             listOfAreas.addAll(areas.areasResult)
                             if (chipGroup.size != listOfAreas.size){
@@ -57,11 +61,9 @@ class AreaActivity : AppCompatActivity(){
                             binding.areaErrorBox.isVisible = false
                             binding.areaProgress.isVisible = false
                             binding.successBox.isVisible = true
-                            if (!areas.error.isNullOrEmpty()){
-                                Toast.makeText(this@AreaActivity, areas.error, Toast.LENGTH_SHORT).show()
-                            }
                         }
                         is DataViewModel.CompetitionEvent.Failure -> {
+                            binding.refreshLayout.isRefreshing = false
                             binding.areaError.text = areas.message
                             binding.areaErrorBox.isVisible = true
                             binding.areaProgress.isVisible = false
@@ -80,6 +82,14 @@ class AreaActivity : AppCompatActivity(){
                 }
             }
         }
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                dataViewModel.areaError.collectLatest { error ->
+                    Toast.makeText(this@AreaActivity, error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
     }
 
     private fun setupChipGroupDynamically(list: ArrayList<AreaData>) {
@@ -88,7 +98,6 @@ class AreaActivity : AppCompatActivity(){
         }
         chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
             binding.proceedBtn.isEnabled = checkedIds.isNotEmpty()
-//            chosenAreaIds.clear()
             SharedPreference.saveAreaIds(
                 toJsonString(
                     checkedIds.map {checkedId ->
@@ -105,7 +114,6 @@ class AreaActivity : AppCompatActivity(){
                 Intent(this, AreaLeagueActivity::class.java)
                     .putExtra("areas_id", SharedPreference.getAreaIds())
             )
-
         }
     }
 

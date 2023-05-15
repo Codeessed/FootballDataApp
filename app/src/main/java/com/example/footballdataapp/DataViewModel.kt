@@ -10,8 +10,8 @@ import com.example.footballdataapp.repository.CompetitionRepositoryImpl
 import com.example.footballdataapp.util.BoundResource
 import com.example.footballdataapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -20,14 +20,6 @@ import javax.inject.Inject
 class DataViewModel @Inject constructor(
     private val repository: CompetitionRepositoryImpl
 ): ViewModel() {
-//    val competition = viewModelScope.launch {
-//        _allCompetition.value = repository.getCompetition().collect{
-//            CompetitionEvent.AllCompetitionSuccess(it)
-//        }
-//val competition = repository.getCompetition().as
-//    }
-
-//    val competition = repository.getCompetition().asLiveData()
 
 
     fun getCompetition(areas: String) {
@@ -39,11 +31,9 @@ class DataViewModel @Inject constructor(
                         _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(response.data!!)
                     }
                     is Resource.Failure ->{
-                        Log.d("competition", "failure ${ response.message!! }")
                         _allCompetition.value = CompetitionEvent.Failure(response.message!!)
                     }
                     is Resource.Error ->{
-                        Log.d("competition", "error ${ response.error!!.message }")
                         _allCompetition.value = CompetitionEvent.Failure(response.error!!.message)
                     }
                 }
@@ -56,32 +46,6 @@ class DataViewModel @Inject constructor(
                 }
             }
 
-
-
-
-
-//                .collect { boundResource ->
-//                when(boundResource){
-//                    is BoundResource.Success -> {
-//                        _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(boundResource.data!!, null)
-//                    }
-//                    is BoundResource.Error -> {
-//                        if (boundResource.data.isNullOrEmpty()){
-//                            _allCompetition.value = CompetitionEvent.Failure(boundResource.error?.localizedMessage.toString())
-//                        }else{
-//                            _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(boundResource.data, boundResource.error?.localizedMessage.toString())
-//                        }
-//                    }
-//                    is BoundResource.Loading -> {
-//                        if (boundResource.data.isNullOrEmpty()){
-//                            _allCompetition.value = CompetitionEvent.Loading
-//                        }
-//                    }
-//                    else -> {
-//                        _allCompetition.value = CompetitionEvent.Empty
-//                    }
-//                }
-//            }
         }
     }
     fun getAreas() {
@@ -89,13 +53,14 @@ class DataViewModel @Inject constructor(
             repository.getAllArea().collect { boundResource ->
                 when(boundResource){
                     is BoundResource.Success -> {
-                        _allAreas.value = CompetitionEvent.AllAreasSuccess(boundResource.data!!, null)
+                        _allAreas.value = CompetitionEvent.AllAreasSuccess(boundResource.data!!)
                     }
                     is BoundResource.Error -> {
                         if (boundResource.data.isNullOrEmpty()){
-                            _allAreas.value = CompetitionEvent.Failure(boundResource.error?.localizedMessage.toString())
+                            _allAreas.value = CompetitionEvent.Failure("Oops, check internet connection and \n click retry to try  again")
                         }else{
-                            _allAreas.value = CompetitionEvent.AllAreasSuccess(boundResource.data, boundResource.error?.localizedMessage.toString())
+                            _areaError.send("Oops, check internet connection and \n try pulling to refresh")
+                            _allAreas.value = CompetitionEvent.AllAreasSuccess(boundResource.data)
                         }
                     }
                     is BoundResource.Loading -> {
@@ -111,6 +76,9 @@ class DataViewModel @Inject constructor(
         }
     }
 
+    private  val _areaError = Channel<String>()
+    val areaError = _areaError.receiveAsFlow()
+
     private  val _allAreas = MutableStateFlow<CompetitionEvent>(CompetitionEvent.Empty)
     val allAreas = _allAreas.asStateFlow()
 
@@ -118,48 +86,12 @@ class DataViewModel @Inject constructor(
     val allCompetition = _allCompetition.asStateFlow()
 
     sealed class CompetitionEvent {
-        class AllAreasSuccess(val areasResult: List<AreaData>, val error: String?) : CompetitionEvent()
+        class AllAreasSuccess(val areasResult: List<AreaData>) : CompetitionEvent()
         class AllCompetitionSuccess(val competitionResponse: CompetitionResponse) : CompetitionEvent()
         object Empty: CompetitionEvent()
         class Failure(val message: String) : CompetitionEvent()
         object Loading : CompetitionEvent()
     }
-
-//    fun allCompetition(){
-//        viewModelScope.launch {
-//            _allCompetition.value = CompetitionEvent.Loading
-//            try {
-//                when(val result = repository.getAllCompetition()){
-//                    is Resource.Success ->{
-//                        _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(result.data!!)
-//                    }
-//                    is Resource.Error -> _allCompetition.value = CompetitionEvent.Failure("An error occurred, we are on it!")
-//                }
-//            }catch (e: Exception){
-//                when(e){
-//                    is IOException -> _allCompetition.value = CompetitionEvent.Failure("Weak network")
-//                    else -> _allCompetition.value = CompetitionEvent.Failure(e.message)
-//                }
-//            }
-//        }
-//    }
-
-//    fun saveCompetition(competition: Competition){
-//        viewModelScope.launch {
-//            dataBaseRepo.insertCompetition(competition)
-//        }
-//    }
-
-//    fun getCompetition(){
-//        viewModelScope.launch {
-//            dataBaseRepo.getCompetition().collectLatest {
-//                _allCompetition.value = CompetitionEvent.AllCompetitionSuccess(it)
-//            }
-//
-////            /dataBaseRepo.getCompetition().flowOn(Dispatchers.IO).stateIn(viewModelScope)
-//
-//        }
-//    }
 
 
 }
