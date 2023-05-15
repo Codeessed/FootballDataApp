@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/refresh_layout"
-    tools:context="com.example.footballdataapp.presentation.screen.AreaActivity">
+    android:id="@+id/refresh_layout">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/main_screen"
         >
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/area_error_box"
